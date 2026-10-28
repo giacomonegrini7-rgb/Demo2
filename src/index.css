@@ -1,0 +1,82 @@
+@import '@fontsource-variable/fraunces';
+@import '@fontsource-variable/inter';
+@import 'tailwindcss';
+
+@theme {
+  --color-ivory: #f7f5ef;
+  --color-sand: #efe9dc;
+  --color-sand-deep: #e4dccb;
+  --color-line: #ddd5c4;
+  --color-ink: #172b3a;
+  --color-ink-soft: #2c4354;
+  --color-muted: #55636e;
+  --color-petrol: #176b63;
+  --color-petrol-dark: #0f524c;
+  --color-petrol-tint: #e3efec;
+  --color-terracotta: #d77a60;
+  --color-terracotta-text: #a9492f;
+  --color-terracotta-tint: #f8e6df;
+  --color-danger: #a12f2f;
+  --color-danger-tint: #fbeaea;
+
+  --font-serif: 'Fraunces Variable', 'Iowan Old Style', Georgia, 'Times New Roman', serif;
+  --font-sans: 'Inter Variable', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+
+  --radius-card: 1.25rem;
+  --shadow-soft: 0 1px 2px rgb(23 43 58 / 0.04), 0 8px 24px -12px rgb(23 43 58 / 0.18);
+  --shadow-lift: 0 2px 4px rgb(23 43 58 / 0.05), 0 18px 40px -18px rgb(23 43 58 / 0.28);
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-rendering: optimizeLegibility;
+  }
+  body {
+    background: var(--color-ivory);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-feature-settings: 'cv11', 'ss01';
+    -webkit-font-smoothing: antialiased;
+  }
+  h1, h2, h3 {
+    font-family: var(--font-serif);
+    font-optical-sizing: auto;
+    letter-spacing: -0.015em;
+    text-wrap: balance;
+  }
+  p { text-wrap: pretty; }
+  :focus-visible {
+    outline: 3px solid var(--color-petrol);
+    outline-offset: 3px;
+    border-radius: 6px;
+  }
+  .tabular { font-variant-numeric: tabular-nums; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+@keyframes tr-fade-up {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: none; }
+}
+.tr-fade-up { animation: tr-fade-up 0.45s ease-out both; }
+
+@keyframes tr-pulse-ring {
+  0% { box-shadow: 0 0 0 0 rgb(23 107 99 / 0.35); }
+  100% { box-shadow: 0 0 0 10px rgb(23 107 99 / 0); }
+}
+.tr-pulse { animation: tr-pulse-ring 1.2s ease-out infinite; }
+
+@media print {
+  .no-print { display: none !important; }
+  body { background: #fff; }
+  .print-break { break-inside: avoid; }
+}
