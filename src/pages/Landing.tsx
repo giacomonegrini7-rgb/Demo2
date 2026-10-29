@@ -48,6 +48,35 @@ export default function Landing() {
     setError(null);
   }
 
+  // Pulsante di avvio: su desktop accanto al titolo, su mobile dopo «Come funziona la demo»
+  // così chi usa il telefono legge scenario e passaggi prima di iniziare.
+  const cta = (
+    <>
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+        {config.status === 'error' ? (
+          <ErrorBox action={<Button variant="secondary" onClick={flow.reloadConfig}>{d.common.retry}</Button>}>{d.errors.startFailed}</ErrorBox>
+        ) : state.surveyCompleted ? (
+          <Button onClick={startOver} icon={<RotateCcw className="size-4" aria-hidden />}>{d.thanks.restart}</Button>
+        ) : (
+          <>
+            <Button onClick={start} loading={busy || config.status === 'loading'} disabled={notReady} className="sm:min-w-64" icon={!busy ? <ArrowRight className="size-4" aria-hidden /> : undefined}>
+              {hasProgress ? d.landing.resume : d.landing.cta}
+            </Button>
+            {hasProgress && <Button variant="quiet" onClick={startOver}>{d.landing.startOver}</Button>}
+          </>
+        )}
+      </div>
+      <div aria-live="polite" className="mt-3">
+        {error && <ErrorBox>{error}</ErrorBox>}
+        {notReady && <ErrorBox>{d.errors.collectionNotReady}</ErrorBox>}
+      </div>
+      <p className="mt-4 flex items-start gap-2 text-[0.95rem] font-medium text-petrol-dark">
+        <ShieldCheck className="mt-0.5 size-[1.05rem] shrink-0" aria-hidden />
+        {d.landing.note}
+      </p>
+    </>
+  );
+
   return (
     <div className="mx-auto max-w-6xl px-4">
       <section className="grid items-center gap-10 pt-8 pb-12 sm:pt-14 lg:grid-cols-[1.05fr_1fr] lg:gap-14">
@@ -58,28 +87,7 @@ export default function Landing() {
           </h1>
           <p className="mt-5 max-w-xl text-[1.12rem] leading-relaxed text-ink-soft">{d.landing.subtitle}</p>
 
-          <div className="mt-7 flex flex-col gap-3 sm:flex-row sm:items-center">
-            {config.status === 'error' ? (
-              <ErrorBox action={<Button variant="secondary" onClick={flow.reloadConfig}>{d.common.retry}</Button>}>{d.errors.startFailed}</ErrorBox>
-            ) : state.surveyCompleted ? (
-              <Button onClick={startOver} icon={<RotateCcw className="size-4" aria-hidden />}>{d.thanks.restart}</Button>
-            ) : (
-              <>
-                <Button onClick={start} loading={busy || config.status === 'loading'} disabled={notReady} className="sm:min-w-64" icon={!busy ? <ArrowRight className="size-4" aria-hidden /> : undefined}>
-                  {hasProgress ? d.landing.resume : d.landing.cta}
-                </Button>
-                {hasProgress && <Button variant="quiet" onClick={startOver}>{d.landing.startOver}</Button>}
-              </>
-            )}
-          </div>
-          <div aria-live="polite" className="mt-3">
-            {error && <ErrorBox>{error}</ErrorBox>}
-            {notReady && <ErrorBox>{d.errors.collectionNotReady}</ErrorBox>}
-          </div>
-          <p className="mt-4 flex items-start gap-2 text-[0.95rem] font-medium text-petrol-dark">
-            <ShieldCheck className="mt-0.5 size-[1.05rem] shrink-0" aria-hidden />
-            {d.landing.note}
-          </p>
+          <div className="mt-7 hidden lg:block">{cta}</div>
         </div>
 
         <div className="grid grid-cols-2 gap-3 sm:gap-4" aria-hidden>
@@ -113,6 +121,8 @@ export default function Landing() {
           </ol>
         </div>
       </section>
+
+      <div className="mt-6 lg:hidden">{cta}</div>
 
       <section className="mt-6 grid gap-3">
         <Notice>

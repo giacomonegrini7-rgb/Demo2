@@ -110,6 +110,6 @@ describe('CSV', () => {
     expect(csv.trim().split('\r\n')).toHaveLength(4);
     expect(csv).not.toContain('"email"');
     expect(csv).toContain(`"'=HYPERLINK(""x"")"`);
-    expect(csv).toContain('Sì, sarei disposto a procedere all’acquisto.');
+    expect(csv).toContain('Sì, sarei disposto a procedere all’acquisto');
   });
 });

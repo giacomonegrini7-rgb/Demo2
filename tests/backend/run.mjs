@@ -40,17 +40,17 @@ async function participant(browser, { origin, country, buy, email }) {
   await page.waitForURL('**/feedback/1');
   const pick = async (label) => { await page.getByLabel(label, { exact: true }).check(); };
   const next = () => page.getByRole('button', { name: 'Avanti' }).click();
-  await pick('Non saprei ancora.'); await next();
-  await pick('Abbastanza.'); await next();
-  await pick('Avrei bisogno di 4–7 giorni.'); await next();
+  await pick('Non saprei ancora'); await next();
+  await pick('Abbastanza'); await next();
+  await pick('Avrei bisogno di 4–7 giorni'); await next();
   await pick('Altro:'); await page.getByLabel('Specifica (facoltativo)').fill('@SUM(1) test'); await next();
-  await pick('La condivisione dei miei dati personali.'); await next();
-  await pick('2–3 notti.'); await next();
+  await pick('La condivisione dei miei dati personali'); await next();
+  await pick('2–3 notti'); await next();
   await page.getByLabel('Il tuo commento').fill('Commento di prova'); await next();
   await page.getByRole('button', { name: 'Continua' }).click();
-  await pick('Probabilmente disposto.'); await next();
-  await pick('Sapere quanto riceverei al netto di tutti i costi.'); await next();
-  await pick('Vorrei recuperare almeno il 40%.');
+  await pick('Probabilmente disposto'); await next();
+  await pick('Sapere quanto riceverei al netto di tutti i costi'); await next();
+  await pick('Vorrei recuperare almeno il 40%');
   await page.getByRole('button', { name: 'Invia le risposte' }).click();
   await page.waitForURL('**/feedback/email');
   if (email) {
@@ -131,7 +131,7 @@ async function main() {
     await p.getByText('Riepilogo dei fatti').waitFor();
     const t = await p.locator('main').innerText();
     assert.match(t, /ha scelto Verona/);
-    assert.match(t, /Non saprei ancora\./);
+    assert.match(t, /Non saprei ancora/);
     assert.match(t, /Commento di prova/);
     assert.match(t, /214 €/);
   });
