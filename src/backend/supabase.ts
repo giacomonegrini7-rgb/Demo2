@@ -1,5 +1,5 @@
 // Backend reale: Supabase con identità anonima tecnica (anonymous sign-in) e funzioni RPC.
-import { createClient, type SupabaseClient } from '@supabase/supabase-js';
+import type { SupabaseClient } from '@supabase/supabase-js';
 import type { Locale } from '../data/catalog';
 import type { CivilDate } from '../lib/dates';
 import type { SearchInput, SearchSnapshot } from '../lib/pricing';
@@ -23,17 +23,23 @@ export function toBackendError(err: unknown): BackendError {
   return new BackendError(token, permanent, e?.details || message);
 }
 
-let participantClient: SupabaseClient | null = null;
-export function participantSupabase(): SupabaseClient {
-  // storageKey distinta da quella dei creator: le due identità non si sovrascrivono nello stesso browser.
-  participantClient ??= createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
-    auth: { storageKey: 'tr-participant-auth', persistSession: true, autoRefreshToken: true, detectSessionInUrl: false },
+/** Client Supabase caricato solo quando serve: l'anteprima locale non scarica la libreria. */
+export async function makeClient(storageKey: string): Promise<SupabaseClient> {
+  const { createClient } = await import('@supabase/supabase-js');
+  return createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+    auth: { storageKey, persistSession: true, autoRefreshToken: true, detectSessionInUrl: false },
   });
+}
+
+let participantClient: Promise<SupabaseClient> | null = null;
+export function participantSupabase(): Promise<SupabaseClient> {
+  // storageKey distinta da quella dei creator: le due identità non si sovrascrivono nello stesso browser.
+  participantClient ??= makeClient('tr-participant-auth');
   return participantClient;
 }
 
 async function ensureAnonymousIdentity(): Promise<void> {
-  const sb = participantSupabase();
+  const sb = await participantSupabase();
   const { data } = await sb.auth.getSession();
   if (data.session) return;
   const { error } = await sb.auth.signInAnonymously();
@@ -43,7 +49,7 @@ async function ensureAnonymousIdentity(): Promise<void> {
 async function rpc<T>(fn: string, args: Record<string, unknown>): Promise<T> {
   let res;
   try {
-    res = await participantSupabase().rpc(fn, args);
+    res = await (await participantSupabase()).rpc(fn, args);
   } catch (err) {
     throw toBackendError(err);
   }
