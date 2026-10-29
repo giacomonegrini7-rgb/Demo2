@@ -3,6 +3,7 @@ import { Link, Navigate, useNavigate } from 'react-router';
 import { CheckCircle2, Mail, RotateCcw } from 'lucide-react';
 import { Button, Card, ErrorBox, LinkButton, Notice, PageHeading } from '../components/ui';
 import { useI18n } from '../i18n';
+import { PHOTOS } from '../data/media';
 import { effectiveMode, useFlow } from '../state/flow';
 
 const EMAIL_RE = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
@@ -164,6 +165,13 @@ export function Privacy() {
           <Section title={d.privacy.recipientsTitle}><p>{d.privacy.recipientsText}</p></Section>
           {p && <Section title={d.privacy.rightsTitle}><p>{t(d.privacy.rightsText, { contact: p.contactEmail })}</p></Section>}
           {p && <p className="text-sm text-muted">{t(d.privacy.version, { version: p.privacyVersion })}</p>}
+          {Object.values(PHOTOS).some((x) => x?.city || x?.room) && (
+            <ul className="grid gap-1 text-xs text-muted" aria-label="Credits">
+              {Object.values(PHOTOS).flatMap((x) => [x?.city, x?.room]).filter(Boolean).map((ph) => (
+                <li key={ph!.src}><a href={ph!.sourceUrl} className="underline" rel="noopener noreferrer">{ph!.credit}</a> · {ph!.license}</li>
+              ))}
+            </ul>
+          )}
         </Card>
         <LinkButton to="/" variant="secondary" className="self-start">{d.privacy.backHome}</LinkButton>
       </div>
